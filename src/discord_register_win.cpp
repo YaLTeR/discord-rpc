@@ -1,14 +1,5 @@
-/*
- * MinGW defaults to WINNT 5.1 (aka XP), however some of functions used here
- * require WINNT >= 6.0 APIs, which are only visible when WINVER and
- * _WIN32_WINNT defines are set properly before including any system headers.
- * Such API is e.g. RegSetKeyValueW.
- */
-#ifdef __MINGW32__
-// 0x0600 == vista
-#define WINVER 0x0600
-#define _WIN32_WINNT 0x0600
-#endif // __MINGW32__
+#define WINVER 0x0501
+#define _WIN32_WINNT 0x0501
 
 #include "discord-rpc.h"
 #include <stdio.h>
@@ -23,6 +14,17 @@
 
 void Discord_RegisterW(const wchar_t* applicationId, const wchar_t* command)
 {
+    using RegSetKeyValueW_T = LONG(WINAPI*)(
+      HKEY hKey, LPCWSTR lpSubKey, LPCWSTR lpValueName, DWORD dwType, LPCVOID lpData, DWORD cbData);
+    const auto advapi32 = GetModuleHandleW(L"Advapi32.dll");
+    if (!advapi32)
+        return;
+
+    const auto RegSetKeyValueW =
+      reinterpret_cast<RegSetKeyValueW_T>(GetProcAddress(advapi32, "RegSetKeyValueW"));
+    if (!RegSetKeyValueW)
+        return;
+
     // https://msdn.microsoft.com/en-us/library/aa767914(v=vs.85).aspx
     // we want to register games so we can run them as discord-<appid>://
     // Update the HKEY_CURRENT_USER, because it doesn't seem to require special permissions.
