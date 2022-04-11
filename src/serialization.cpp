@@ -154,13 +154,20 @@ size_t JsonWriteRichPresenceObj(char* dest,
                 }
                 else 
                 {
-                    if (presence->buttonUrl[0] && presence->buttonLabel[0] ||
-                        presence->buttonUrl[1] && presence->buttonLabel[1]) {
+                    bool btn1 = presence->buttonUrl[0] && presence->buttonLabel[0];
+                    bool btn2 = presence->buttonUrl[1] && presence->buttonLabel[1];
+                    if (btn1 || btn2) {
                         WriteArray buttons(writer, "buttons");
-                        for (int b = 0; b < DISCORD_MAX_BUTTONS; ++b) {
-                            WriteObject button(writer);
-                            WriteOptionalString(writer, "label", presence->buttonLabel[b]);
-                            WriteOptionalString(writer, "url", presence->buttonUrl[b]);
+                        if (btn1) {
+                            WriteObject button1(writer);
+                            WriteOptionalString(writer, "label", presence->buttonLabel[0]);
+                            WriteOptionalString(writer, "url", presence->buttonUrl[0]);
+                        }
+
+                        if (btn2) {
+                            WriteObject button2(writer);
+                            WriteOptionalString(writer, "label", presence->buttonLabel[1]);
+                            WriteOptionalString(writer, "url", presence->buttonUrl[1]);
                         }
                     }
                 }
