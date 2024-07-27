@@ -35,13 +35,21 @@ execute_process(
 find_file(RAPIDJSONTEST NAMES rapidjson rapidjson-1.1.0 PATHS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty CMAKE_FIND_ROOT_PATH_BOTH)
 if (NOT RAPIDJSONTEST)
     message("no rapidjson, download")
+    set(RJ_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/rapidjson-1.1.0)
     set(RJ_TAR_FILE ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/v1.1.0.tar.gz)
+    set(RJ_PATCH_FILE ${CMAKE_CURRENT_SOURCE_DIR}/gcc14-fix.patch)
     file(DOWNLOAD https://github.com/miloyip/rapidjson/archive/v1.1.0.tar.gz ${RJ_TAR_FILE})
     execute_process(
         COMMAND ${CMAKE_COMMAND} -E tar xzf ${RJ_TAR_FILE}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty
     )
     file(REMOVE ${RJ_TAR_FILE})
+    if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+        execute_process(
+            COMMAND patch -p1 -i ${RJ_PATCH_FILE}
+            WORKING_DIRECTORY ${RJ_DIR}   
+        )
+    endif()
 endif(NOT RAPIDJSONTEST)
 
 find_file(RAPIDJSON NAMES rapidjson rapidjson-1.1.0 PATHS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty CMAKE_FIND_ROOT_PATH_BOTH)
