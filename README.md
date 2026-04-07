@@ -93,6 +93,7 @@ There's a [CMake](https://cmake.org/download/) file that should be able to gener
 
 ```sh
     cd <path to discord-rpc>
+    git submodule update --init --recursive
     mkdir build
     cd build
     cmake .. -DCMAKE_INSTALL_PREFIX=<path to install discord-rpc to>

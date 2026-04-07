@@ -152,8 +152,7 @@ size_t JsonWriteRichPresenceObj(char* dest,
                     WriteOptionalString(writer, "join", presence->joinSecret);
                     WriteOptionalString(writer, "spectate", presence->spectateSecret);
                 }
-                else 
-                {
+                else {
                     bool btn1 = presence->buttonUrl[0] && presence->buttonLabel[0];
                     bool btn2 = presence->buttonUrl[1] && presence->buttonLabel[1];
                     if (btn1 || btn2) {
